@@ -1,3 +1,96 @@
 # net2rank
 
 a new methodology that combines analysis of disease-specific omics data, network-based protein embeddings, and supervised machine learning to prioritize proteins for diseases of interest.
+
+## Installation
+
+```bash
+git clone https://github.com/larsjuhljensen/net2rank.git
+
+#install uv
+pip install uv
+
+#install net2rank
+cd net2rank
+uv sync
+uv pip install .
+
+# make sure you activate the virtual environment
+source .venv/bin/activate
+
+# double check
+which python
+```
+
+## Cross validation
+```bash
+python main.py cross_validation \
+--train_file data/train/aortic_aneurysm.olink.tsv \
+--file_type list
+
+python main.py cross_validation \
+--train_file data/train/COADREAD.mutations.intogen.txt \
+--file_type list
+
+python main.py cross_validation \
+--train_file data/train/MEL.mutations.intogen.txt \
+--file_type list
+
+python main.py cross_validation \
+--train_file data/train/DLBCLNOS.mutations.intogen.txt \
+--file_type list
+
+python main.py cross_validation \
+--train_file data/train/atopic_dermatitis.integrated.tsv \
+--file_type pvalue \
+--pos_size 1000
+
+python main.py cross_validation \
+--train_file data/train/ulcerative_colitis.integrated.tsv \
+--file_type pvalue \
+--pos_size 1300
+
+python main.py cross_validation \
+--train_file data/train/focal_epilepsy.rnaseq.kjaer_guelfi_consensus.txt \
+--file_type list
+```
+
+## Train and test
+```bash
+python main.py train_test \
+--train_file data/train/atopic_dermatitis.integrated.tsv \
+--file_type pvalue \
+--test_file data/test/atopic_dermatitis.gold_standard.balanced.tsv \
+--pos_size 1000
+
+python main.py train_test \
+--train_file data/train/ulcerative_colitis.integrated.tsv \
+--file_type pvalue \
+--test_file data/test/ulcerative_colitis.gold_standard.balanced.tsv \
+--pos_size 1300
+
+python main.py train_test \
+--train_file data/train/focal_epilepsy.rnaseq.kjaer_guelfi_consensus.txt \
+--file_type list \
+--test_file data/test/focal_epilepsy.gold_standard.balanced.tsv
+
+
+python main.py train_test \
+--train_file data/train/COADREAD.mutations.intogen.txt \
+--file_type list \
+--test_file data/test/COADREAD.gold_standard.balanced.tsv
+
+python main.py train_test \
+--train_file data/train/MEL.mutations.intogen.txt \
+--file_type list \
+--test_file data/test/MEL.gold_standard.balanced.tsv
+
+python main.py train_test \
+--train_file data/train/DLBCLNOS.mutations.intogen.txt \
+--file_type list \
+--test_file data/test/DLBCLNOS.gold_standard.balanced.tsv 
+
+python main.py train_test \
+--train_file data/train/aortic_aneurysm.olink.tsv \
+--file_type list \
+--test_file data/test/aortic_aneurysm.gold_standard.balanced.tsv

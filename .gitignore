@@ -1,0 +1,11 @@
+.venv/
+.python
+notupload_data/
+__pycache__/
+*.pyc
+# macOS
+.DS_Store/
+preprocessing.ipynb
+results/
+*aortic_aneurysm.olink.tsv
+src/net2rank.egg-info
