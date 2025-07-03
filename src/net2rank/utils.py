@@ -70,6 +70,7 @@ def process_train_file(train_file: str, file_type: str,
         df_train = pos_neg_threshold(pos_size, df_train)
         # filter out proteins not in the protein space
         df_train = df_train[df_train['protein'].isin(protein_space)]
+        df_train.columns = ['protein', 'class']
         return df_train
     
     elif file_type == 'list':
@@ -84,7 +85,9 @@ def process_train_file(train_file: str, file_type: str,
     
     elif file_type == 'label':
         # just load the file
-        return pd.read_csv(train_file, sep='\t', header=None)
+        df = pd.read_csv(train_file, sep='\t', header=None)
+        df.columns = ['protein', 'class']
+        return df
     
     
 def save_predictions(y_test, y_pred, test_set, save_dir):
@@ -98,5 +101,8 @@ def save_predictions(y_test, y_pred, test_set, save_dir):
         'true_label': y_test,
         'predicted_score': y_pred
     })
+    
+    # sort the predictions by predicted score
+    predictions_df = predictions_df.sort_values(by='predicted_score', ascending=False)
     
     return predictions_df
