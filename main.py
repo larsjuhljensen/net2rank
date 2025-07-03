@@ -104,6 +104,7 @@ class Net2rank:
         if save_dir is not None:
             # save the combined results of all folds
             combined_results = pd.concat(save_results)
+            combined_results = combined_results.sort_values(by='predicted_score', ascending=False)
             combined_results.to_csv(os.path.join(save_dir, f'{disease_name}_cv_prediction_results.tsv'), sep='\t', index=False)
             
 
@@ -208,6 +209,38 @@ class Net2rank:
                 plt.close()
                 
         print(f"Test completed for {disease_name}. Results saved to {save_dir if save_dir else 'current directory'}.")
+        
+        # predict over the whole protein space, and save the results
+        X_space = human_embeddings.get_embeddings(protein_space)
+        y_space_pred = model.predict_proba(X_space)[:, 1]
+        space_result = pd.DataFrame({
+            'protein': protein_space,
+            'predicted_score': y_space_pred
+        })
+        # define the category:
+        space_result['category'] = 'novel'
+        space_result['text_mining'] = False 
+        space_result['training'] = False
+        # if the protein is in the test set and label is 1, then it is in 'text_mining'
+        space_result.loc[space_result['protein'].isin(df_test[df_test['class'] == 1]['protein']), 'text_mining'] = True
+        # if the protein is in the training set and label is 1, then it is in 'training'
+        space_result.loc[space_result['protein'].isin(df_train[df_train['class'] == 1]['protein']), 'training'] = True
+        
+        # if the protein is in both text_mining and training, then it is in 'both'
+        for index, row in space_result.iterrows():
+            if row['text_mining'] and row['training']:
+                space_result.at[index, 'category'] = 'both'
+            elif row['text_mining']:
+                space_result.at[index, 'category'] = 'text_mining'
+            elif row['training']:
+                space_result.at[index, 'category'] = 'training'
+        # drop the text_mining and training columns
+        space_result = space_result.drop(columns=['text_mining', 'training'])
+        space_result = space_result.sort_values(by='predicted_score', ascending=False)
+        space_result.to_csv(os.path.join(save_dir, f'{disease_name}_whole_prediction_results.tsv'),
+                            sep='\t', index=False)
+        
+        
         return None
 
 

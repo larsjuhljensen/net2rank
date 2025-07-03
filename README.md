@@ -29,15 +29,15 @@ python main.py cross_validation \
 --file_type list
 
 python main.py cross_validation \
---train_file data/train/COADREAD.mutations.intogen.txt \
+--train_file data/train/colorectal_adenocarcinoma.mutations.intogen.tsv \
 --file_type list
 
 python main.py cross_validation \
---train_file data/train/MEL.mutations.intogen.txt \
+--train_file data/train/melanoma.mutations.intogen.tsv \
 --file_type list
 
 python main.py cross_validation \
---train_file data/train/DLBCLNOS.mutations.intogen.txt \
+--train_file data/train/diffuse_large_b-cell_lymphoma.mutations.intogen.tsv \
 --file_type list
 
 python main.py cross_validation \
@@ -51,7 +51,7 @@ python main.py cross_validation \
 --pos_size 1300
 
 python main.py cross_validation \
---train_file data/train/focal_epilepsy.rnaseq.kjaer_guelfi_consensus.txt \
+--train_file data/train/focal_epilepsy.rnaseq.kjaer_guelfi_consensus.tsv \
 --file_type list
 ```
 
@@ -70,27 +70,27 @@ python main.py train_test \
 --pos_size 1300
 
 python main.py train_test \
---train_file data/train/focal_epilepsy.rnaseq.kjaer_guelfi_consensus.txt \
+--train_file data/train/focal_epilepsy.rnaseq.kjaer_guelfi_consensus.tsv \
 --file_type list \
 --test_file data/test/focal_epilepsy.gold_standard.balanced.tsv
 
+python main.py train_test \
+--train_file data/train/colorectal_adenocarcinoma.mutations.intogen.tsv \
+--file_type list \
+--test_file data/test/colorectal_adenocarcinoma.gold_standard.balanced.tsv
 
 python main.py train_test \
---train_file data/train/COADREAD.mutations.intogen.txt \
+--train_file data/train/melanoma.mutations.intogen.tsv \
 --file_type list \
---test_file data/test/COADREAD.gold_standard.balanced.tsv
+--test_file data/test/melanoma.gold_standard.balanced.tsv
 
 python main.py train_test \
---train_file data/train/MEL.mutations.intogen.txt \
+--train_file data/train/diffuse_large_b-cell_lymphoma.mutations.intogen.tsv \
 --file_type list \
---test_file data/test/MEL.gold_standard.balanced.tsv
-
-python main.py train_test \
---train_file data/train/DLBCLNOS.mutations.intogen.txt \
---file_type list \
---test_file data/test/DLBCLNOS.gold_standard.balanced.tsv 
+--test_file data/test/diffuse_large_b-cell_lymphoma.gold_standard.balanced.tsv
 
 python main.py train_test \
 --train_file data/train/aortic_aneurysm.olink.tsv \
 --file_type list \
 --test_file data/test/aortic_aneurysm.gold_standard.balanced.tsv
+```
