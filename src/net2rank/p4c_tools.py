@@ -25,11 +25,11 @@ def make_network(proteins:Iterable[str],
     suid = p4c.commands_post(command)
     return suid
 
-def network_cluster(suid, inflation_parameter=4):
-    cluster_cmd = (f'cluster mcl '
-            f'network="{suid}" '
-            f'inflation_parameter="{inflation_parameter}"')
-    cluster_result = p4c.commands_post(cluster_cmd)  
+def network_cluster(inflation_parameter=4):
+    cluster_cmd = ('cluster mcl '
+            'network=current '
+            f'inflation_parameter={inflation_parameter}')
+    cluster_result = p4c.commands_post(cluster_cmd) 
     return cluster_result
 
 def function_enrichment(proteins):
@@ -51,6 +51,64 @@ def function_enrichment(proteins):
     data = json.loads(response.text)
     
     return data
+
+
+def parse_cluster_result(cluster_result):
+    
+    clusters = cluster_result[0]['clusters']
+    
+    node_list = []
+    for cluster in clusters:
+        nodes = [node['name'] for node in cluster['nodes']]
+        
+        if len(nodes) < 10:
+            break
+        node_list.append(nodes)
+    return node_list
+
+
+def function_enrichment_from_clusters(cluster_result:List) -> pd.DataFrame:
+    """ Perform function enrichment analysis for each cluster in the cluster result.
+    Parameters
+    ----------
+    cluster_result : List
+        List of cluster results, where each cluster contains a list of proteins.
+        From the output of `network_cluster()` function.
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame containing enrichment results for each cluster.
+    """
+    # enrichment analysis per cluster
+    result = list()
+    cluster_proteins = list()
+    for idx,proteins in enumerate(parse_cluster_result(cluster_result)):
+        enrichment = function_enrichment(proteins=proteins)
+            # select cat
+        use_cats = {'KEGG','Process','RCTM','WikiPathways','Process'}
+
+        for row in enrichment:
+            if float(row["fdr"]) > 0.05:
+                continue
+            
+            # if category is not None and row["category"] != category:
+            #     continue
+            
+            if row["category"] not in use_cats:
+                continue
+
+            result.append({
+                'term': row['term'],
+                'description': row["description"],
+                'fdr': float(row["fdr"]),
+                'num_genes': row['number_of_genes'],
+                'num_genes_background': row['number_of_genes_in_background'],
+                'category': row["category"],
+                'cluter_number':idx
+            }) 
+        cluster_proteins.append(proteins)
+    return pd.DataFrame(result),cluster_proteins
+
 
 def parse_enrichment_results(enrichment_results:List,category=None) -> pd.DataFrame:
     result = list()
@@ -175,6 +233,8 @@ def make_network_plot(df_protein_category:pd.DataFrame, enrichment_results:List[
         network_name=f'{disease_name}_module_network_{process_name}',
         cutoff=cutoff,
         networktype=networktype)
+
+def make_network_plot_with_pie_charts(df_protein_category:pd.DataFrame, selected_proteins,suid) -> str:
 
     # Get the proteins that are in the 'both' category for pie chart logic
     both_proteins = df_protein_category[df_protein_category['category'] == 'both']['protein'].values

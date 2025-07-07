@@ -240,6 +240,13 @@ class Net2rank:
         space_result.to_csv(os.path.join(save_dir, f'{disease_name}_whole_prediction_results.tsv'),
                             sep='\t', index=False)
         
+        # save the predictions with 5% FPR as threshold
+        fpr, tpr, thresholds = roc_curve(y_test, y_pred)
+        threshold = thresholds[fpr <= 0.05][-1]
+        df_predictions = space_result[space_result['predicted_score'] >= threshold]
+        df_predictions.to_csv(os.path.join(save_dir, f'{disease_name}_fpr_0.05_prediction_results.tsv'),
+                              sep='\t', index=False)
+        
         
         return None
 

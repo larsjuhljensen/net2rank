@@ -6,8 +6,8 @@ __pycache__/
 # macOS
 .DS_Store/
 preprocessing.ipynb
-# results/
-# *aortic_aneurysm.olink.tsv
+results/
+*aortic_aneurysm.olink.tsv
 src/net2rank.egg-info
 
 # visualization styling
@@ -17,3 +17,4 @@ data/ZS-Brand-Guidelines.pdf
 notebooks/logs
 
 data/ranked_list_inflammatome.tsv
+
