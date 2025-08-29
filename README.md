@@ -16,10 +16,8 @@ pip install uv
 #install net2rank
 cd net2rank
 uv sync
-uv pip install .
-
-# make sure you activate the virtual environment
 source .venv/bin/activate
+uv pip install .
 
 # double check
 which python
@@ -27,10 +25,6 @@ which python
 
 ## Cross validation
 ```bash
-python main.py cross_validation \
---train_file data/train/aortic_aneurysm.olink.tsv \
---file_type label
-
 python main.py cross_validation \
 --train_file data/train/colorectal_adenocarcinoma.mutations.intogen.tsv \
 --file_type list
@@ -56,6 +50,11 @@ python main.py cross_validation \
 python main.py cross_validation \
 --train_file data/train/focal_epilepsy.rnaseq.kjaer_guelfi_consensus.tsv \
 --file_type list
+
+## we cannot provide the olink data here, but can be download here: https://insight.olink.com/olink-data/ukb-diseases
+python main.py cross_validation \
+--train_file data/train/aortic_aneurysm.olink.tsv \
+--file_type label
 ```
 
 ## Train and test
@@ -92,6 +91,7 @@ python main.py train_test \
 --file_type list \
 --test_file data/test/diffuse_large_b-cell_lymphoma.gold_standard.balanced.tsv
 
+## we cannot provide the olink data here, but can be download here: https://insight.olink.com/olink-data/ukb-diseases
 python main.py train_test \
 --train_file data/train/aortic_aneurysm.olink.tsv \
 --file_type label \
@@ -100,4 +100,5 @@ python main.py train_test \
 ```
 
 ## Network visualization
-We used Cytoscape stringAPP to visualize newtworks, and used py4cytoscape for some automation. Please check the notebook `notebooks/enrichment.ipynb` for details. We also provided our Cytoscape session here: https://zenodo.org/records/16919169
+We used Cytoscape stringAPP to visualize newtworks, and used py4cytoscape for some automation. Please check the notebook `notebooks/enrichment.ipynb` for details. If you wish to run it, you need to `pip install py4cytoscape`.
+We also provided our Cytoscape session here: https://zenodo.org/records/16919169
