@@ -1,6 +1,9 @@
 # net2rank
 
-a new methodology that combines analysis of disease-specific omics data, network-based protein embeddings, and supervised machine learning to prioritize proteins for diseases of interest.
+A new methodology that combines analysis of disease-specific omics data, network-based protein embeddings, and supervised machine learning to map the disease-protein associations.
+
+## Citation
+
 
 ## Installation
 
@@ -26,7 +29,7 @@ which python
 ```bash
 python main.py cross_validation \
 --train_file data/train/aortic_aneurysm.olink.tsv \
---file_type list
+--file_type label
 
 python main.py cross_validation \
 --train_file data/train/colorectal_adenocarcinoma.mutations.intogen.tsv \
@@ -91,6 +94,10 @@ python main.py train_test \
 
 python main.py train_test \
 --train_file data/train/aortic_aneurysm.olink.tsv \
---file_type list \
+--file_type label \
 --test_file data/test/aortic_aneurysm.gold_standard.balanced.tsv
+
 ```
+
+## Network visualization
+We used Cytoscape stringAPP to visualize newtworks, and used py4cytoscape for some automation. Please check the notebook `notebooks/enrichment.ipynb` for details. We also provided our Cytoscape session here: https://zenodo.org/records/16919169

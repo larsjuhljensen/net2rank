@@ -38,9 +38,8 @@ class H5Loader:
 def pos_neg_threshold(pos_size,  omics_file):
     """create a positive and negative set from your omics input file.
     Positives will be the top x in our omics data file, which is sorted so that most important genes at top of list.
-    The top x is determined by checking a benchmark plot for the disease and it's gold standard.
+
     Negatives are anything that are not in the top X * 3, so if top 1000, you do not sample negatives from top 3000.
-    Negative and positive lists will be saved in folder where code is run, for safety.
     """
 
     pos_size = pos_size

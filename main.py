@@ -70,6 +70,7 @@ class Net2rank:
         human_embeddings = H5Loader(embedding_file)
         protein_space = human_embeddings.proteins
         df_train = process_train_file(train_file, file_type, protein_space,pos_size)
+        
         disease_name = os.path.basename(train_file).split('.')[0]
         
         # make sure that we keep the balance of positive and negative samples
@@ -184,13 +185,16 @@ class Net2rank:
         X_test = human_embeddings.get_embeddings(df_test.iloc[:,0].tolist())
         y_test = df_test.iloc[:,1].values
         
+        
         model = LogisticRegression(max_iter=1000, random_state=random_state)
         model.fit(X_train, y_train)
         
         y_pred = model.predict_proba(X_test)[:, 1]
         auc = roc_auc_score(y_test, y_pred)
+        print(f"Num TRAIN POS: {y_train[y_train == 1].shape[0]} Num TRAIN NEG: {y_train[y_train == 0].shape[0]}")
+        print(f"Num TEST POS: {y_test[y_test == 1].shape[0]} Num TEST NEG: {y_test[y_test == 0].shape[0]}")
         print(f"Test AUC: {auc:.4f}")
-        
+
         if save_dir is not None:
             fold_result = save_predictions(y_test, y_pred, df_test, save_dir)
             fold_result.to_csv(os.path.join(save_dir, 

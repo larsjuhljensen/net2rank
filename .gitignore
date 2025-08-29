@@ -3,18 +3,25 @@
 notupload_data/
 __pycache__/
 *.pyc
+
 # macOS
 .DS_Store/
 preprocessing.ipynb
 results/
+results.zip
 *aortic_aneurysm.olink.tsv
 src/net2rank.egg-info
 
-# visualization styling
+# visualization
 data/Revelen_style.xml
 data/ZS-Brand-Guidelines.pdf
-
+# notebooks/
 notebooks/logs
 
+# data files
 data/ranked_list_inflammatome.tsv
+data/train/aortic_aneurysm.olink.tsv
 
+
+logs/
+cytoscape_analysis_results/

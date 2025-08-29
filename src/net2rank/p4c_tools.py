@@ -5,9 +5,9 @@ from typing import List, Dict, Iterable
 
 import json
 import requests
-
+import math
 from net2rank.utils import process_train_file, H5Loader
-
+import os
 
 def make_network(proteins:Iterable[str],
                  network_name:str,
@@ -25,10 +25,12 @@ def make_network(proteins:Iterable[str],
     suid = p4c.commands_post(command)
     return suid
 
-def network_cluster(inflation_parameter=4):
+def network_cluster(inflation_parameter=4,showUI=False):
     cluster_cmd = ('cluster mcl '
             'network=current '
-            f'inflation_parameter={inflation_parameter}')
+            f'inflation_parameter={inflation_parameter} '
+            f'showUI={showUI}'
+            )
     cluster_result = p4c.commands_post(cluster_cmd) 
     return cluster_result
 
@@ -55,7 +57,7 @@ def function_enrichment(proteins):
 
 def parse_cluster_result(cluster_result):
     
-    clusters = cluster_result[0]['clusters']
+    clusters = cluster_result['clusters']
     
     node_list = []
     for cluster in clusters:
@@ -234,10 +236,22 @@ def make_network_plot(df_protein_category:pd.DataFrame, enrichment_results:List[
         cutoff=cutoff,
         networktype=networktype)
 
-def make_network_plot_with_pie_charts(df_protein_category:pd.DataFrame, selected_proteins,suid) -> str:
+
+
+def make_network_plot_with_pie_charts(df_protein_category:pd.DataFrame, 
+                                      selected_proteins,suid, map_node_size=False,
+                                      ukb_proteins=None) -> str:
 
     # Get the proteins that are in the 'both' category for pie chart logic
     both_proteins = df_protein_category[df_protein_category['category'] == 'both']['protein'].values
+
+    if map_node_size:
+        if ukb_proteins is None:
+            raise ValueError("ukb_proteins must be provided when map_node_size is True")
+        ukb_proteins = open(ukb_proteins).read().splitlines()
+    
+        df_protein_category['ukb_measured'] = 'not_measured'
+        df_protein_category.loc[df_protein_category['protein'].isin(ukb_proteins), 'ukb_measured'] = 'measured'
     
     pie_data = []
     for node in selected_proteins:
@@ -254,6 +268,8 @@ def make_network_plot_with_pie_charts(df_protein_category:pd.DataFrame, selected
 
     # Pass a copy of the DataFrame to avoid SettingWithCopyWarning
     p4c.load_table_data(df_protein_category.copy(), data_key_column='protein', table='node')
+    
+    # Set node colors
     p4c.set_node_color_mapping(
         table_column='category',
         table_column_values=['text_mining', 'training', 'novel'],
@@ -262,6 +278,18 @@ def make_network_plot_with_pie_charts(df_protein_category:pd.DataFrame, selected
         style_name='Revelen',
         network=suid
     )
+    
+    if map_node_size:
+        # Set node sizes - small for 'training' and 'both', big for 'text_mining'
+        p4c.set_node_size_mapping(
+            table_column='ukb_measured',
+            table_column_values=['not_measured', 'measured'],
+            sizes=[30, 30*math.sqrt(2)],  # Small for not_measured, big for measured
+            mapping_type='discrete',
+            style_name='Revelen',
+            network=suid
+        )
+
 
     # Set up the pie chart with start angle from top (270 degrees or -90 degrees)
     p4c.load_table_data(pie_df.copy(), data_key_column='name', table='node')
@@ -274,3 +302,91 @@ def make_network_plot_with_pie_charts(df_protein_category:pd.DataFrame, selected
     )
     return suid
 
+
+def pick_cluster_proteins(clusters, idx):
+    """
+    Select proteins from a specific cluster index.
+    """
+    return [node_dict['name'] for node_dict in clusters['clusters'][idx]['nodes']]
+
+def cluster_enrichment_pipeline(disease_name,
+                                predictions,
+                                cutoff=0.7,networktype='full STRING network',topk=None):
+    """
+    Main pipeline to load predictions, create network, cluster, and perform enrichment analysis.
+    Args:
+        disease_name (str): Name of the disease to load predictions for.
+        cutoff (float): Cutoff value for network creation.
+        networktype (str): Type of network to create. Defaults to 'full STRING network'; or 'physical subnetwork'.
+    """
+    # df_cat = load_predictions(disease_name,file_pattern)
+    df_cat = pd.read_csv(predictions, sep='\t')
+    if topk is not None:
+        df_cat = df_cat.sort_values(by='predicted_score', ascending=False).head(topk)
+    
+    suid = make_network(
+        proteins=df_cat['protein'].tolist(),
+        network_name=f'{disease_name}_main_network',
+        cutoff=cutoff,
+        networktype=networktype)
+    
+    cluster_result = network_cluster()
+    
+    df_clusters_enrichment, cluster_proteins = function_enrichment_from_clusters(cluster_result)
+    
+    return df_cat,df_clusters_enrichment, cluster_proteins
+
+def plot_cluster_network(cluster_proteins, idx, df,disease_name):
+    """
+    Plot the network for a specific cluster index with pie charts.
+    """
+    suid = make_network(
+        proteins=cluster_proteins[idx],
+        network_name=f'{disease_name}_cluster_{idx}_network',
+        cutoff=0.7)
+    
+    suid = make_network_plot_with_pie_charts(
+        df_protein_category=df,
+        selected_proteins=cluster_proteins[idx],
+        suid=suid,)
+
+    p4c.commands.commands_run(f'layout apply preferred networkSelected={suid}')
+    p4c.notebook_export_show_image()
+    
+    return suid
+
+def save_clusters_and_enrichment(disease_name,
+                                 save_to_dir,
+                                 cutoff=0.7,
+                                 networktype='full STRING network',topk=None):
+    if not os.path.exists(save_to_dir):
+        os.makedirs(save_to_dir)
+    
+    df_cat, df_clusters_enrichment,cluster_proteins = cluster_enrichment_pipeline(disease_name,
+                                                                                  save_to_dir,
+                                                                                  cutoff,
+                                                                                  networktype,topk) 
+    
+    # save the cluster enrichment results and cluster proteins
+    networktype = networktype.replace(' ', '_').lower()
+    file_name = f'{disease_name}_clusters_enrichment_{cutoff}_networktype_{networktype}.tsv'
+    df_clusters_enrichment.to_csv(os.path.join(save_to_dir, file_name), sep='\t', index=False)
+    
+    # save the cluster proteins
+    file_name = f'{disease_name}_clusters_proteins_{cutoff}_networktype_{networktype}.tsv'
+    with open(os.path.join(save_to_dir, file_name), 'w') as f:
+        f.write('protein\tcluster_idx\n')
+        for idx, cluster in enumerate(cluster_proteins):
+            for protein in cluster:
+                f.write(f'{protein}\t{idx}\n')
+    print(f'Saved {disease_name} cluster enrichment and proteins to {save_to_dir}')      
+    return None
+
+def load_records(disease_name, 
+                 predictions,
+                 file_pattern,cut_off=0.7,networktype='full STRING network',):
+    df_cat = pd.read_csv(predictions, sep='\t')
+    df_clusters_enrichment = pd.read_csv(f'{file_pattern}/{disease_name}_clusters_enrichment_{cut_off}_networktype_{networktype.replace(" ", "_").lower()}.tsv', sep='\t')
+    cluster_proteins = pd.read_csv(f'{file_pattern}/{disease_name}_clusters_proteins_{cut_off}_networktype_{networktype.replace(" ", "_").lower()}.tsv', sep='\t')
+    cluster_proteins = cluster_proteins.groupby('cluster_idx')['protein'].apply(list).tolist()
+    return df_cat,df_clusters_enrichment, cluster_proteins
