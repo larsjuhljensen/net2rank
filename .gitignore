@@ -25,3 +25,6 @@ data/train/aortic_aneurysm.olink.tsv
 
 logs/
 cytoscape_analysis_results/
+
+data/README.md
+data/data.zip
