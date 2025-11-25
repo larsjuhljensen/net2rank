@@ -1,9 +1,30 @@
 # net2rank
 
-A new methodology that combines analysis of disease-specific omics data, network-based protein embeddings, and supervised machine learning to map the disease-protein associations.
+Repo for the manuscript: "Molecular maps of diseases from omics data and network embeddings
+", where we combine omics data with network embeddings to create disease-protein association maps.
+
+
+![Overview](net2rank-overview.png)
 
 ## Citation
 
+Please cite the manuscript and the STRING database:
+
+Our manuscript:
+
+```
+coming soon
+```
+
+The STRING database v12.0:
+
+```
+Szklarczyk, Damian, et al. "The STRING database in 2023: protein–protein association networks and functional enrichment analyses for any sequenced genome of interest." Nucleic acids research 51.D1 (2023): D638-D646.
+```
+
+## The 64 dimensions human network embedding
+
+[data/9606.node2vec64.h5](data/9606.node2vec64.h5)
 
 ## Installation
 
@@ -24,6 +45,7 @@ which python
 ```
 
 ## Cross validation
+
 ```bash
 python main.py cross_validation \
 --train_file data/train/colorectal_adenocarcinoma.mutations.intogen.tsv \
@@ -58,6 +80,7 @@ python main.py cross_validation \
 ```
 
 ## Train and test
+
 ```bash
 python main.py train_test \
 --train_file data/train/atopic_dermatitis.integrated.tsv \
@@ -100,5 +123,6 @@ python main.py train_test \
 ```
 
 ## Network visualization
+
 We used Cytoscape stringAPP to visualize newtworks, and used py4cytoscape for some automation. Please check the notebook `notebooks/enrichment.ipynb` for details. If you wish to run it, you need to `pip install py4cytoscape`.
 We also provided our Cytoscape session here: https://zenodo.org/records/16919169
