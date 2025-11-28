@@ -13,13 +13,13 @@ Please cite the manuscript and the STRING database:
 Our manuscript:
 
 ```
-coming soon
+Hu, D. et al. Molecular maps of diseases from omics data and network embeddings. Preprint at https://doi.org/10.1101/2025.11.25.689280 (2025).
 ```
 
 The STRING database v12.0:
 
 ```
-Szklarczyk, Damian, et al. "The STRING database in 2023: protein–protein association networks and functional enrichment analyses for any sequenced genome of interest." Nucleic acids research 51.D1 (2023): D638-D646.
+Szklarczyk, D. et al. The STRING database in 2023: protein–protein association networks and functional enrichment analyses for any sequenced genome of interest. Nucleic Acids Research 51, D638–D646 (2023).
 ```
 
 ## The 64 dimensions human network embedding
