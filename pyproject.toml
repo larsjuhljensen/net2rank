@@ -9,5 +9,6 @@ dependencies = [
     "h5py>=3.14.0",
     "matplotlib>=3.10.3",
     "pandas>=2.3.0",
+    "pecanpy>=2.0.9",
     "scikit-learn>=1.7.0",
 ]

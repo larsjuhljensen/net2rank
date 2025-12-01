@@ -10,13 +10,13 @@ Repo for the manuscript: "Molecular maps of diseases from omics data and network
 
 Please cite the manuscript and the STRING database:
 
-Our manuscript:
+[Our manuscript](https://doi.org/10.1101/2025.11.25.689280):
 
 ```
 Hu, D. et al. Molecular maps of diseases from omics data and network embeddings. Preprint at https://doi.org/10.1101/2025.11.25.689280 (2025).
 ```
 
-The STRING database v12.0:
+[The STRING database v12.0](https://doi.org/10.1093/nar/gkac1000):
 
 ```
 Szklarczyk, D. et al. The STRING database in 2023: protein–protein association networks and functional enrichment analyses for any sequenced genome of interest. Nucleic Acids Research 51, D638–D646 (2023).
@@ -25,6 +25,25 @@ Szklarczyk, D. et al. The STRING database in 2023: protein–protein association
 ## The 64 dimensions human network embedding
 
 [data/9606.node2vec64.h5](data/9606.node2vec64.h5)
+
+To compute the embeddings, please use the code in [node2vec.py](node2vec.py), with the following command:
+
+```bash
+# Make an output directory if it does not exist 
+mkdir data
+
+python node2vec.py \
+--input_file 9606.protein.links.v12.0.txt.gz \
+-o data \
+-d 64 \
+-p 0.1 \
+-q 0.9 \
+--num_walks 100 \
+--walk_length 100 \
+--epochs 10
+```
+
+To use this embedding for other purposes, you can use the [H5Loader](net2rank/utils.py) class.
 
 ## Installation
 
