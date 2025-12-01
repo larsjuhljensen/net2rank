@@ -42,7 +42,7 @@ python node2vec.py \
 --walk_length 100 \
 --epochs 10
 ```
-
+The file `9606.protein.links.v12.0.txt.gz` can be downloaded from the [STRING database](https://stringdb-downloads.org/download/protein.links.v12.0/9606.protein.links.v12.0.txt.gz).
 To use this embedding for other purposes, you can use the [H5Loader](net2rank/utils.py) class.
 
 ## Installation
@@ -143,5 +143,5 @@ python main.py train_test \
 
 ## Network visualization
 
-We used Cytoscape stringAPP to visualize newtworks, and used py4cytoscape for some automation. Please check the notebook `notebooks/enrichment.ipynb` for details. If you wish to run it, you need to `pip install py4cytoscape`.
-We also provided our Cytoscape session here: https://zenodo.org/records/16919169
+We used Cytoscape stringAPP to visualize newtworks, and used py4cytoscape for some automation. Please check the notebook [notebooks/enrichment.ipynb](notebooks/enrichment.ipynb) for details. If you wish to run it, you need to `pip install py4cytoscape`.
+We also provided our Cytoscape session here: [https://zenodo.org/records/16919169](https://zenodo.org/records/16919169)
