@@ -7,26 +7,39 @@ import os
 # load h5 embeddings
 class H5Loader:
     """Class to load protein embeddings from an h5 file."""
-    def __init__(self, h5_file:str):
+    def __init__(self, h5_file: str):
         self.h5_file = h5_file
+        self.metadata = {}
         self.proteins, self.embeddings = self.load_embeddings(h5_file)
         self.prot2ind = {protein: i for i, protein in enumerate(self.proteins)}
     
-    def load_embeddings(self,embeddings_file:str) -> Tuple[List[str], np.ndarray]:
+    def load_embeddings(self, embeddings_file: str) -> Tuple[List[str], np.ndarray]:
         """Load embeddings from an h5 file."""
         if not embeddings_file.endswith('.h5'):
             raise ValueError("The provided file is not an h5 file.")
+        
         with h5py.File(embeddings_file, 'r') as f:
-            proteins = list(f.keys())
-            embeddings = np.array([f[protein][:] for protein in proteins])
+            # Load metadata if present
+            if 'metadata' in f:
+                meta_keys = f['metadata'].attrs.keys()
+                for key in meta_keys:
+                    self.metadata[key] = f['metadata'].attrs[key]
+            
+            # Load embeddings and proteins from the new structure
+            embeddings = f['embeddings'][:]
+            proteins = f['proteins'][:]
+            
+            # Convert protein names from bytes to strings
+            proteins = [p.decode('utf-8') for p in proteins]
             
         return proteins, embeddings
     
-    def get_embeddings(self,proteins):
+    def get_embeddings(self, proteins):
         """Get embeddings for a list of proteins."""
-        # check if any proteins are in the loaded embeddings
+        # Check if any proteins are in the loaded embeddings
         if len(self.proteins) == 0 or len(self.embeddings) == 0:
             raise ValueError("No embeddings loaded. Please check the h5 file.")
+        
         for protein in proteins:
             if protein not in self.prot2ind:
                 raise ValueError(f"Protein {protein} not found in the embeddings.")
