@@ -28,3 +28,13 @@ cytoscape_analysis_results/
 
 data/README.md
 data/data.zip
+
+9606.protein.sequence.embeddings.v12.0.h5
+
+concat_results
+concat.py 
+conca.py 
+concatenated_embeddings.h5
+run_concat.sh
+run_seq.sh
+seq_results
