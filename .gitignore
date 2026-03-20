@@ -43,3 +43,8 @@ build
 archived
 data/disease_textmining_mentions.tsv
 data/mouse_textmining_mentions.tsv
+
+data/9606.protein.link.no_text.v12.0.txt
+data/9606.protein.links.detailed.v12.0.txt.gz
+data/9606.protein.links.full.v12.0.txt.gz
+data/human_textmining_mentions.tsv
