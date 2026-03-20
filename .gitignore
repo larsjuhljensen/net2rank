@@ -38,3 +38,8 @@ concatenated_embeddings.h5
 run_concat.sh
 run_seq.sh
 seq_results
+build
+
+archived
+data/disease_textmining_mentions.tsv
+data/mouse_textmining_mentions.tsv

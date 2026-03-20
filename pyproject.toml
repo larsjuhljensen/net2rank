@@ -7,6 +7,7 @@ requires-python = ">=3.11"
 dependencies = [
     "fire>=0.7.0",
     "h5py>=3.14.0",
+    "ipykernel>=7.2.0",
     "matplotlib>=3.10.3",
     "pandas>=2.3.0",
     "pecanpy>=2.0.9",
