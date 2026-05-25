@@ -1,6 +1,6 @@
 # Molecular maps of diseases from omics data and network embeddings
 
-Repo for the manuscript: "[Molecular maps of diseases from omics data and network embeddings](https://doi.org/10.1038/s41540-026-00746-8)", where we combine omics data with network embeddings to create disease-protein association maps.
+Repo for the paper: "[Molecular maps of diseases from omics data and network embeddings](https://doi.org/10.1038/s41540-026-00746-8)", where we combine omics data with network embeddings to create disease-protein association maps.
 
 
 ![Overview](net2rank-overview.png)
