@@ -1,18 +1,18 @@
 # Molecular maps of diseases from omics data and network embeddings
 
-Repo for the manuscript: "[Molecular maps of diseases from omics data and network embeddings](https://doi.org/10.1101/2025.11.25.689280)", where we combine omics data with network embeddings to create disease-protein association maps.
+Repo for the manuscript: "[Molecular maps of diseases from omics data and network embeddings](https://doi.org/10.1038/s41540-026-00746-8)", where we combine omics data with network embeddings to create disease-protein association maps.
 
 
 ![Overview](net2rank-overview.png)
 
 ## Citation
 
-Please cite the manuscript and the STRING database:
+Please cite the paper and the STRING database:
 
-[Our manuscript](https://doi.org/10.1101/2025.11.25.689280):
+[Our paper](https://doi.org/10.1038/s41540-026-00746-8):
 
 ```
-Hu, D. et al. Molecular maps of diseases from omics data and network embeddings. Preprint at https://doi.org/10.1101/2025.11.25.689280 (2025).
+Hu, D. et al. Molecular maps of diseases from omics data and network embeddings. npj Syst Biol Appl (2026).
 ```
 
 [The STRING database v12.0](https://doi.org/10.1093/nar/gkac1000):
